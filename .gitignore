@@ -1,0 +1,8 @@
+# Ignore the virtual environment directory
+env/
+# Ignore the __pycache__ directory
+__pycache__/    
+# Ignore the .vscode directory
+.vscode/    
+# Ignore database files
+*.db    

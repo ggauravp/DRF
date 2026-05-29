@@ -1,11 +1,14 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from students.models import Student
 from .serializers import StudentSerializer
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.parsers import JSONParser
+from rest_framework.views import APIView
+from .serializers import EmployeeSerializer
+from employees.models import Employee
 # Create your views here.
 
 
@@ -58,4 +61,50 @@ def studentdetailview(request, id):
         
     elif request.method == "DELETE":
         student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
+
+class EmployeesView(APIView):
+    def get(self, request):
+        employees = Employee.objects.all()
+        employees_json = EmployeeSerializer(employees, many=True)
+        return Response(employees_json.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        data = EmployeeSerializer(data=request.data)
+        if data.is_valid():
+            data.save()
+            return Response(data.data, status=status.HTTP_201_CREATED)
+        return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class EmployeeDetailView(APIView):
+    def get_object(self, id):
+        try:
+            return Employee.objects.get(id=id)
+        except Employee.DoesNotExist:
+            raise Http404
+
+    def get(self, request, id):
+        employee = self.get_object(id) # self is used to call another method of the same class 
+        if employee is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        employee_json = EmployeeSerializer(employee)
+        return Response(employee_json.data, status=status.HTTP_200_OK)
+
+    def put(self, request, id):
+        employee = self.get_object(id) 
+        if employee is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        employee_json = EmployeeSerializer(employee, data=request.data)
+        if employee_json.is_valid():
+            employee_json.save()
+            return Response(employee_json.data, status=status.HTTP_200_OK)
+        else:
+            return Response(employee_json.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id):
+        employee = self.get_object(id)
+        if employee is None:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        employee.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

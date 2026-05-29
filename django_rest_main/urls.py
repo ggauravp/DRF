@@ -22,6 +22,7 @@ urlpatterns = [
 
     # web application endpoints
     path('students/', include('students.urls')),
+    path('employees/', include('employees.urls')),
 
     # api endpoints
     path('api/', include('api.urls')),  

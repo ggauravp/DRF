@@ -16,6 +16,7 @@ def studentsview(request):
    
    # return JsonResponse(students) --> In order to allow non-dict objects to be serialized set the safe parameter to False.
    # return JsonResponse(students, safe=False) --> Object of type QuerySet is not JSON serializable
+
    # Now we can either manually serialize the data using list comprehension OR
    # we can use Django's built-in serializers to convert the QuerySet into a JSON format.
    
@@ -37,7 +38,7 @@ def studentsview(request):
       return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT', 'DELETE'])
 def studentdetailview(request, id):
     try:
         student = Student.objects.get(id=id)
@@ -46,3 +47,15 @@ def studentdetailview(request, id):
     if request.method == 'GET':
         student_json = StudentSerializer(student)
         return Response(student_json.data, status=status.HTTP_200_OK)
+    
+    elif request.method == 'PUT':
+        student_json = StudentSerializer(student, data= request.data)
+        if student_json.is_valid():
+            student_json.save()
+            return Response(student_json.data, status=status.HTTP_200_OK)
+        else:
+            return Response(student_json.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+    elif request.method == "DELETE":
+        student.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

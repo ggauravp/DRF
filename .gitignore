@@ -5,4 +5,4 @@ __pycache__/
 # Ignore the .vscode directory
 .vscode/    
 # Ignore database files
-*.db    
+db.sqlite3

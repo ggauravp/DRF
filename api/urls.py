@@ -16,4 +16,6 @@ urlpatterns = [
 
     path('blogs/', views.BlogsViewset.as_view()), # this is for blogs viewset
     path('comments/', views.CommentViewset.as_view()), # this is for comments viewset
+
+    path('blogs/<int:pk>/', views.BlogDetailView.as_view()), # this is for blog detail view
 ]

@@ -13,4 +13,7 @@ urlpatterns = [
     # path('employees/<int:pk>/', views.EmployeeDetailView.as_view()),
 
     path('', include(router.urls)), # this is for viewsets, we need to include the router urls to the urlpatterns
+
+    path('blogs/', views.BlogsViewset.as_view()), # this is for blogs viewset
+    path('comments/', views.CommentViewset.as_view()), # this is for comments viewset
 ]

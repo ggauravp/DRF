@@ -2,6 +2,7 @@ from asyncio import mixins
 
 from django.shortcuts import render
 from django.http import Http404, JsonResponse
+from api.pagination import CustomPagination
 from students.models import Student
 from .serializers import StudentSerializer
 from rest_framework.decorators import api_view
@@ -14,6 +15,7 @@ from employees.models import Employee
 from rest_framework import generics, mixins, viewsets
 from blogs.models import Blog, Comment
 from blogs.serializers import BlogSerializer, CommentSerializer
+from .pagination import CustomPagination
 
 @api_view(['GET', 'POST'])
 def studentsview(request):
@@ -188,6 +190,7 @@ class Employeeviewset(viewsets.ViewSet):
 class Employeeviewset(viewsets.ModelViewSet):
     queryset = Employee.objects.all()
     serializer_class = EmployeeSerializer
+    pagination_class = CustomPagination  # Use the custom pagination class for this viewset
 
 
 class BlogsViewset(generics.ListCreateAPIView):

@@ -7,7 +7,8 @@
 # Viewsets
 # Model Viewsets
 # Pagination 
-- Global when you configure pagination globally in settings.py, it automatically works for GenericAPIView-based views and ViewSets (including ModelViewSet, ListAPIView, etc)
+### Global
+when you configure pagination globally in settings.py, it automatically works for GenericAPIView-based views and ViewSets (including ModelViewSet, ListAPIView, etc)
 ### Custom Pagination
 
 A custom pagination class is implemented using `PageNumberPagination`.
@@ -43,3 +44,9 @@ def get_paginated_response(self, data):
 * `self.page_size` returns the default page size configured in the pagination class.
 * `self.page.paginator.count` returns the total number of records in the queryset.
 * `results` contains the records for the current page.
+
+# Filters
+### Global Filter
+### Custom Filter
+- lookup_expr='icontains', 'iexact'
+- RangeFilter only works integer field

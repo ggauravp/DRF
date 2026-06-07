@@ -333,16 +333,6 @@ As you move downward, DRF provides more built-in functionality and reduces boile
 | Generic Views           | Standard CRUD operations         |
 | ViewSet / ModelViewSet  | Full REST APIs with minimal code |
 
-## Recommendation
-
-For learning DRF, understand the flow in this order:
-
-1. Function-Based Views
-2. APIView
-3. GenericAPIView
-4. Mixins
-5. Generic Views
-6. ViewSets
 
 Most real-world DRF projects use **Generic Views** and **ViewSets** because they reduce boilerplate code and improve maintainability.
 

@@ -115,14 +115,237 @@ The complete related object details are included in the response.
 * Reduce additional API calls from the frontend.
 * Improve API readability and usability.
 
+# Function-Based Views (FBV) vs Class-Based Views (CBV) in DRF
 
-# Function Based View
-# Class Based View
-# ApiView
-# Mixins
-# Generic View
-# Viewsets
-# Model Viewsets
+Views handle incoming HTTP requests and return responses. DRF provides two main ways to build API views:
+
+## Function-Based Views (FBV)
+
+Function-Based Views are regular Python functions that handle requests.
+
+### Example
+
+```python
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@api_view(['GET'])
+def book_list(request):
+    return Response({"message": "List of books"})
+```
+
+### Advantages
+
+* Easy to understand and write.
+* Good for simple APIs.
+* Suitable for beginners.
+
+### Disadvantages
+
+* Repetitive code for CRUD operations.
+* Difficult to maintain as the project grows.
+* Less reusable.
+
+---
+
+## Class-Based Views (CBV)
+
+Class-Based Views organize request handling inside classes.
+
+### Example
+
+```python
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
+class BookListView(APIView):
+
+    def get(self, request):
+        return Response({"message": "List of books"})
+```
+
+### Advantages
+
+* Better code organization.
+* Reusable through inheritance.
+* Easier to extend and maintain.
+* Preferred for larger projects.
+
+### Disadvantages
+
+* Slightly more complex than FBVs.
+* Requires understanding of OOP concepts.
+
+---
+
+# DRF Class-Based View Hierarchy
+
+## 1. APIView
+
+The base class for all DRF class-based views.
+
+```python
+class BookView(APIView):
+
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
+```
+
+Provides:
+
+* Request parsing
+* Authentication
+* Permissions
+* Throttling
+* Content negotiation
+
+---
+
+## 2. GenericAPIView
+
+Extends APIView and adds common functionality.
+
+Provides:
+
+* `queryset`
+* `serializer_class`
+* `get_queryset()`
+* `get_serializer()`
+
+Example:
+
+```python
+class BookView(GenericAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+```
+
+---
+
+## 3. Mixins
+
+Mixins provide reusable CRUD functionality.
+
+### Available Mixins
+
+* `ListModelMixin` → List objects
+* `RetrieveModelMixin` → Retrieve single object
+* `CreateModelMixin` → Create object
+* `UpdateModelMixin` → Update object
+* `DestroyModelMixin` → Delete object
+
+Example:
+
+```python
+class BookListView(
+    GenericAPIView,
+    ListModelMixin
+):
+
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+
+    def get(self, request):
+        return self.list(request)
+```
+
+---
+
+## 4. Generic Views
+
+DRF combines GenericAPIView and Mixins into ready-made views.
+
+### Common Generic Views
+
+* `ListAPIView`
+* `CreateAPIView`
+* `RetrieveAPIView`
+* `UpdateAPIView`
+* `DestroyAPIView`
+* `ListCreateAPIView`
+* `RetrieveUpdateAPIView`
+* `RetrieveDestroyAPIView`
+* `RetrieveUpdateDestroyAPIView`
+
+Example:
+
+```python
+class BookListView(ListAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+```
+
+---
+
+## 5. ViewSets
+
+A ViewSet groups related actions into a single class.
+
+```python
+from rest_framework.viewsets import ModelViewSet
+
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+```
+
+Provides all CRUD operations automatically:
+
+* list()
+* retrieve()
+* create()
+* update()
+* partial_update()
+* destroy()
+
+---
+
+# View Progression in DRF
+
+```text
+Function-Based View
+        ↓
+APIView
+        ↓
+GenericAPIView
+        ↓
+Mixins
+        ↓
+Generic Views
+        ↓
+ViewSets
+```
+
+As you move downward, DRF provides more built-in functionality and reduces boilerplate code.
+
+---
+
+# When to Use What?
+
+| View Type               | Use Case                         |
+| ----------------------- | -------------------------------- |
+| Function-Based View     | Small or simple APIs             |
+| APIView                 | Custom request handling          |
+| GenericAPIView + Mixins | Custom CRUD behavior             |
+| Generic Views           | Standard CRUD operations         |
+| ViewSet / ModelViewSet  | Full REST APIs with minimal code |
+
+## Recommendation
+
+For learning DRF, understand the flow in this order:
+
+1. Function-Based Views
+2. APIView
+3. GenericAPIView
+4. Mixins
+5. Generic Views
+6. ViewSets
+
+Most real-world DRF projects use **Generic Views** and **ViewSets** because they reduce boilerplate code and improve maintainability.
+
 # Pagination 
 ### Global
 when you configure pagination globally in settings.py, it automatically works for GenericAPIView-based views and ViewSets (including ModelViewSet, ListAPIView, etc)
